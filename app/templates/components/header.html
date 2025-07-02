@@ -1,0 +1,67 @@
+{% load static %}
+<header class="main-header">
+    <div class="container">
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="{% url 'home' %}" class="logo">
+                    <span class="logo-text">AgriInsight</span>
+                </a>
+            </div>
+            
+            <div class="nav-center">
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                    <li><a href="{% url 'model' %}" class="nav-link">Detection</a></li>
+                    <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                    <li><a href="{% url 'feedback' %}" class="nav-link">Feedback</a></li>
+                    <li><a href="{% url 'online_advise' %}" class="nav-link">Expert Advice</a></li>
+                    <li><a href="{% url 'store' %}" class="nav-link">Store</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-right">
+                {% if is_authenticated %}
+                    <!-- User is logged in - show profile icon -->
+                    <div class="profile-menu">
+                        <div class="profile-icon" id="profileIcon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-popup" id="profilePopup">
+                            <div class="profile-header">
+                                <h3>Profile</h3>
+                                <button class="close-popup" id="closePopup">&times;</button>
+                            </div>
+                            <div class="profile-content">
+                                <div class="profile-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="profile-info">
+                                    <p><strong>Name:</strong> {{ user.name }}</p>
+                                    <p><strong>Email:</strong> {{ user.email }}</p>
+                                    <p>{{ user.created_at|date:"M d, Y" }}</p>
+                                </div>
+                                <div class="profile-actions">
+                                    <a href="{% url 'my_orders' %}" class="btn btn-outline">My Orders</a>
+                                    <a href="{% url 'feedback_history' %}" class="btn btn-outline">My Feedback</a>
+                                    <a href="{% url 'advice_history' %}" class="btn btn-outline">My Advice</a>
+                                    <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- User is not logged in - show only signup button -->
+                    <div class="auth-buttons">
+                        <a href="{% url 'signup' %}" class="btn">Sign Up</a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </div>
+</header> 

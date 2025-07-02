@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Advice Requests | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Green & White Color Scheme for Plant Disease Detection */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --bright-green: #66BB6A;
+        --pale-green: #A5D6A7;
+        --mint-green: #C8E6C9;
+        --forest-green: #1B5E20;
+        --sage-green: #81C784;
+        --emerald-green: #00C853;
+        --gradient-primary: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        --gradient-secondary: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        --gradient-light: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+        --shadow-soft: 0 10px 30px rgba(46, 125, 50, 0.1);
+        --shadow-strong: 0 20px 40px rgba(46, 125, 50, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .advice-hero {
+        background: var(--gradient-primary);
+        padding: 6rem 0 4rem 0;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .advice-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M25 10 Q35 5 40 15 Q45 25 35 30 Q25 35 20 25 Q15 15 25 10" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .advice-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .advice-hero h1 {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .advice-hero p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+
+    /* Main Container */
+    .advice-container {
+        max-width: 1000px;
+        margin: -3rem auto 4rem auto;
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem;
+        box-shadow: var(--shadow-strong);
+        position: relative;
+        z-index: 3;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: var(--gradient-light);
+        border-radius: var(--border-radius);
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        line-height: 1.2;
+        max-width: 100%;
+    }
+
+    .stat-label {
+        color: var(--forest-green);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* Advice List */
+    .advice-list {
+        display: grid;
+        gap: 2rem;
+    }
+
+    .advice-item {
+        background: white;
+        border: 2px solid var(--pale-green);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .advice-item:hover {
+        border-color: var(--light-green);
+        box-shadow: var(--shadow-soft);
+        transform: translateY(-2px);
+    }
+
+    .advice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .advice-meta {
+        flex: 1;
+    }
+
+    .advice-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 0.5rem;
+    }
+
+    .advice-status {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+
+    .status-reviewed {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .advice-details {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .detail-item i {
+        color: var(--primary-green);
+        width: 16px;
+    }
+
+    .advice-description {
+        color: var(--forest-green);
+        line-height: 1.6;
+        font-size: 1rem;
+        background: var(--gradient-light);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-green);
+        margin-bottom: 1rem;
+    }
+
+    .advice-files {
+        margin-top: 1rem;
+    }
+
+    .files-title {
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 0.5rem;
+    }
+
+    .file-list {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .file-item {
+        background: var(--gradient-light);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: var(--forest-green);
+        border: 1px solid var(--pale-green);
+    }
+
+    .submission-date {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        line-height: 1.4;
+    }
+
+    .submission-date i {
+        color: var(--primary-green);
+        margin-right: 0.3rem;
+        width: 14px;
+    }
+
+    .submission-time {
+        color: #888;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--forest-green);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--pale-green);
+        margin-bottom: 2rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--forest-green);
+    }
+
+    .empty-state p {
+        color: #666;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="advice-hero">
+    <div class="advice-hero-content">
+        <h1 class="fade-in">My Advice Requests</h1>
+        <p class="fade-in">Track all your expert advice requests and their current status</p>
+    </div>
+</section>
+
+<!-- Main Container -->
+<section class="advice-container">
+    <!-- Stats Section -->
+    <div class="stats-section fade-in">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_advice }}</div>
+            <div class="stat-label">Total Requests</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user.name|default:"User" }}</div>
+            <div class="stat-label">Your Name</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user.email|default:"user@example.com" }}</div>
+            <div class="stat-label">Your Email</div>
+        </div>
+    </div>
+
+    <!-- Advice List -->
+    {% if advice_list %}
+        <div class="advice-list">
+            {% for advice in advice_list %}
+                <div class="advice-item fade-in">
+                    <div class="advice-header">
+                        <div class="advice-meta">
+                            <h3 class="advice-title">{{ advice.name }}</h3>
+                            <span class="advice-status status-{{ advice.status }}">{{ advice.status }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="advice-details">
+                        <div class="detail-item">
+                            <i class="fas fa-seedling"></i>
+                            <span>{{ advice.plant_type|title }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>{{ advice.issue_type|title }}</span>
+                        </div>
+                        {% if advice.phone %}
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ advice.phone }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="advice-description">
+                        <strong>Problem Description:</strong><br>
+                        {{ advice.description }}
+                    </div>
+
+                    {% if advice.uploaded_files %}
+                        <div class="advice-files">
+                            <div class="files-title">
+                                <i class="fas fa-paperclip"></i>
+                                Uploaded Files:
+                            </div>
+                            <div class="file-list">
+                                {% for file in advice.uploaded_files %}
+                                    <div class="file-item">
+                                        <i class="fas fa-file"></i>
+                                        {{ file.name }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="submission-date">
+                        <div>
+                            <i class="fas fa-calendar"></i>
+                            {% if advice.day_name != 'Unknown' %}
+                                {{ advice.day_name }}, {{ advice.formatted_date }}
+                            {% else %}
+                                Submitted on: {{ advice.submitted_at|date:"F j, Y" }}
+                            {% endif %}
+                        </div>
+                        {% if advice.formatted_time != 'Unknown' %}
+                            <div class="submission-time">
+                                <i class="fas fa-clock"></i>
+                                {{ advice.formatted_time }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state fade-in">
+            <i class="fas fa-comment-slash"></i>
+            <h3>No Advice Requests Yet</h3>
+            <p>You haven't submitted any advice requests yet. Get expert help for your plant health concerns!</p>
+            <a href="{% url 'online_advise' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Submit Your First Request
+            </a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.fade-in');
+        animatedElements.forEach(el => observer.observe(el));
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Store | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    .store-hero {
+        background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        padding: 3rem 0 2rem 0;
+        text-align: center;
+        color: white;
+    }
+    .store-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .store-desc {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+    .products-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+    .product-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(46, 125, 50, 0.08);
+        padding: 2rem 1.5rem;
+        width: 320px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        border: 1px solid #e0e0e0;
+        transition: box-shadow 0.2s;
+    }
+    .product-card:hover {
+        box-shadow: 0 20px 40px rgba(46, 125, 50, 0.15);
+    }
+    .product-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2E7D32;
+        margin-bottom: 0.5rem;
+    }
+    .product-desc {
+        color: #555;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+    .product-price {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #388e3c;
+        margin-bottom: 1.2rem;
+    }
+    .order-btn {
+        background: #2E7D32;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .order-btn:hover {
+        background: #388e3c;
+    }
+    .order-success {
+        background: #C8E6C9;
+        color: #2E7D32;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        margin: 1rem auto 2rem auto;
+        max-width: 400px;
+        text-align: center;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
+    }
+    .order-error {
+        background: #ffcdd2;
+        color: #b71c1c;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        margin: 1rem auto 2rem auto;
+        max-width: 400px;
+        text-align: center;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(183, 28, 28, 0.08);
+    }
+    .cart-section {
+        background: #f7f7f7;
+        border-radius: 16px;
+        padding: 2rem 1.5rem;
+        margin: 2rem auto;
+        max-width: 600px;
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.06);
+    }
+    .cart-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2E7D32;
+        margin-bottom: 1rem;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.7rem;
+        font-size: 1rem;
+    }
+    .cart-item-name { font-weight: 500; }
+    .cart-item-qty { color: #555; }
+    .cart-item-total { color: #388e3c; font-weight: 500; }
+    .remove-btn {
+        background: none;
+        border: none;
+        color: #b71c1c;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-left: 0.7rem;
+    }
+    .cart-summary {
+        margin-top: 1.2rem;
+        font-size: 1.1rem;
+        color: #222;
+    }
+    .address-form {
+        margin-top: 1.5rem;
+    }
+    .address-input {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1.5px solid #A5D6A7;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    .order-btn-main {
+        background: #2E7D32;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: background 0.2s;
+    }
+    .order-btn-main:hover { background: #388e3c; }
+    .cart-empty { color: #888; font-size: 1.05rem; margin: 1rem 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="store-hero">
+    <div class="container">
+        <h1 class="store-title">Plant Pesticide Store</h1>
+        <p class="store-desc">Browse and order effective plant pesticides. Prices are in Pakistani Rupees (PKR).</p>
+    </div>
+</div>
+
+{% if order_success %}
+    <div class="order-success">
+        <i class="fas fa-check-circle"></i> Your order has been placed successfully!
+    </div>
+{% endif %}
+{% if order_error %}
+    <div class="order-error">
+        <i class="fas fa-exclamation-circle"></i> {{ order_error }}
+    </div>
+{% endif %}
+
+<div class="products-list">
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-name">{{ product.name }}</div>
+        <div class="product-desc">{{ product.description }}</div>
+        <div class="product-price">Price: Rs. {{ product.price }} /-</div>
+        {% if is_authenticated %}
+        <button class="order-btn" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+        {% else %}
+        <div style="color:#888; font-size:0.98rem;">Login to order this product</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_authenticated %}
+<div class="cart-section">
+    <div class="cart-title">My Cart</div>
+    {% if cart_items and cart_items|length > 0 %}
+        {% for item in cart_items %}
+        <div class="cart-item">
+            <span class="cart-item-name">{{ item.name }}</span>
+            <span class="cart-item-qty">x{{ item.quantity }}</span>
+            <span class="cart-item-total">Rs. {{ item.total }}</span>
+            <button class="remove-btn" onclick="removeFromCart('{{ item.id }}')" title="Remove">&times;</button>
+        </div>
+        {% endfor %}
+        <div class="cart-summary">
+            <strong>Total Products:</strong> {{ cart_items|length }}<br>
+            <strong>Total Bill:</strong> Rs. {{ cart_total }} /-
+        </div>
+        <form method="post" class="address-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="place_order">
+            <input type="text" name="address" class="address-input" placeholder="Enter your delivery address" value="" required>
+            {% if address_error %}<div style="color:#b71c1c; font-size:0.97rem;">{{ address_error }}</div>{% endif %}
+            <div style="margin-bottom:0.7rem;">
+                <label><input type="checkbox" name="cash_on_delivery" required {% if cash_on_delivery_error %}style='outline:2px solid #b71c1c;'{% endif %}> Cash on Delivery</label>
+                {% if cash_on_delivery_error %}<div style="color:#b71c1c; font-size:0.97rem;">{{ cash_on_delivery_error }}</div>{% endif %}
+            </div>
+            <button type="submit" class="order-btn-main">Place Order</button>
+        </form>
+    {% else %}
+        <div class="cart-empty">Your cart is empty. Add products to cart.</div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addToCart(productId) {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'action=add_to_cart&product_id=' + productId
+    })
+    .then(response => response.json())
+    .then(data => { location.reload(); });
+}
+function removeFromCart(productId) {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'action=remove_from_cart&product_id=' + productId
+    })
+    .then(response => response.json())
+    .then(data => { location.reload(); });
+}
+function toggleAddressInput(enable) {
+    var input = document.getElementById('addressInput');
+    if (enable) {
+        input.disabled = false;
+        input.required = true;
+        input.style.background = '#fff';
+        input.value = '';
+    } else {
+        input.disabled = true;
+        input.required = false;
+        input.style.background = '#f3f3f3';
+        input.value = '';
+    }
+}
+</script>
+{% endblock %} 

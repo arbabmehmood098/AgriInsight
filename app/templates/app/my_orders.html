@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    .orders-hero {
+        background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        padding: 3rem 0 2rem 0;
+        text-align: center;
+        color: white;
+    }
+    .orders-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .orders-list {
+        max-width: 800px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(46, 125, 50, 0.08);
+        padding: 2rem 2rem 1rem 2rem;
+    }
+    .order-card {
+        border-bottom: 1px solid #e0e0e0;
+        padding: 1.2rem 0;
+    }
+    .order-card:last-child { border-bottom: none; }
+    .order-status {
+        font-weight: 600;
+        padding: 0.2rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.98rem;
+        margin-left: 0.7rem;
+    }
+    .status-pending { background: #fff3cd; color: #b8860b; }
+    .status-delivered { background: #C8E6C9; color: #2E7D32; }
+    .order-products {
+        margin: 0.7rem 0 0.5rem 0;
+        padding-left: 1.2rem;
+        font-size: 1rem;
+    }
+    .order-products li { margin-bottom: 0.2rem; }
+    .order-meta {
+        color: #555;
+        font-size: 0.98rem;
+        margin-bottom: 0.2rem;
+    }
+    .order-total {
+        font-weight: 600;
+        color: #388e3c;
+        font-size: 1.08rem;
+    }
+    .no-orders {
+        color: #888;
+        text-align: center;
+        margin: 2rem 0;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-hero">
+    <div class="container">
+        <h1 class="orders-title">My Orders</h1>
+        <p>View all your store orders and their status.</p>
+    </div>
+</div>
+<div class="orders-list">
+    {% if orders and orders|length > 0 %}
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-meta">
+                <strong>Order Date:</strong> {{ order.ordered_at }}<br>
+                <strong>Delivery Address:</strong> {{ order.address }}
+            </div>
+            <ul class="order-products">
+                {% for item in order.items %}
+                <li>{{ item.product_name }} (x{{ item.quantity }}) - Rs. {{ item.total }}</li>
+                {% endfor %}
+            </ul>
+            <div class="order-total">Total: Rs. {{ order.total_bill }} /-</div>
+            <span class="order-status status-{{ order.status }}">
+                {% if order.status == 'delivered' %}Delivered{% else %}Pending{% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-orders">You have not placed any orders yet.</div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Green & White Color Scheme for Plant Disease Detection */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --bright-green: #66BB6A;
+        --pale-green: #A5D6A7;
+        --mint-green: #C8E6C9;
+        --forest-green: #1B5E20;
+        --sage-green: #81C784;
+        --emerald-green: #00C853;
+        --gradient-primary: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        --gradient-secondary: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        --gradient-light: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+        --shadow-soft: 0 10px 30px rgba(46, 125, 50, 0.1);
+        --shadow-strong: 0 20px 40px rgba(46, 125, 50, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .about-hero {
+        background: var(--gradient-primary);
+        padding: 6rem 0 4rem 0;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M25 10 Q35 5 40 15 Q45 25 35 30 Q25 35 20 25 Q15 15 25 10" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .about-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .about-hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .about-hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+
+    .about-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 0.8rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .about-hero-badge:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+    }
+
+    /* Mission Section */
+    .mission-section {
+        padding: 5rem 0;
+        background: white;
+    }
+
+    .mission-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .mission-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+    }
+
+    .mission-content h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 1.5rem;
+    }
+
+    .mission-content p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .mission-features {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .mission-feature {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--gradient-light);
+        border-radius: 12px;
+        transition: var(--transition);
+    }
+
+    .mission-feature:hover {
+        transform: translateX(10px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .mission-feature i {
+        font-size: 1.5rem;
+        color: var(--primary-green);
+        width: 40px;
+        text-align: center;
+    }
+
+    .mission-feature span {
+        font-weight: 500;
+        color: var(--forest-green);
+    }
+
+    .mission-image {
+        text-align: center;
+        position: relative;
+    }
+
+    .mission-image::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        right: -20px;
+        bottom: -20px;
+        background: var(--gradient-light);
+        border-radius: var(--border-radius);
+        z-index: -1;
+    }
+
+    .mission-image img {
+        width: 100%;
+        max-width: 400px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+    }
+
+    /* Team Section */
+    .team-section {
+        padding: 5rem 0;
+        background: var(--gradient-light);
+    }
+
+    .team-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    .section-title {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .team-member {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        transform: scaleX(0);
+        transition: var(--transition);
+    }
+
+    .team-member:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-strong);
+    }
+
+    .team-member:hover::before {
+        transform: scaleX(1);
+    }
+
+    .team-member-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 1.5rem auto;
+        overflow: hidden;
+        border: 4px solid var(--mint-green);
+        transition: var(--transition);
+    }
+
+    .team-member:hover .team-member-image {
+        border-color: var(--primary-green);
+        transform: scale(1.1);
+    }
+
+    .team-member-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .team-member-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 0.5rem;
+    }
+
+    .team-member-role {
+        font-size: 1rem;
+        color: var(--primary-green);
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .team-member-bio {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Values Section */
+    .values-section {
+        padding: 5rem 0;
+        background: white;
+    }
+
+    .values-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .value-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+        text-align: center;
+        border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-strong);
+        border-color: rgba(76, 175, 80, 0.2);
+    }
+
+    .value-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--gradient-primary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem auto;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .value-card:hover .value-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .value-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+    }
+
+    .value-description {
+        font-size: 1rem;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .mission-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .mission-feature {
+            padding: 0.8rem;
+        }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .slide-in-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .slide-in-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scale-in {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.8s ease-out;
+    }
+
+    .scale-in.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="about-hero-content">
+        <div class="about-hero-badge fade-in">
+            <i class="fas fa-seedling"></i>
+            <span>Revolutionizing Agriculture with AI</span>
+        </div>
+        <h1 class="about-hero-title fade-in">About AgriInsight</h1>
+        <p class="about-hero-subtitle fade-in">We're dedicated to empowering farmers with cutting-edge AI technology to protect crops and ensure food security for future generations.</p>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="mission-container">
+        <div class="mission-grid">
+            <div class="mission-content slide-in-left">
+                <h2>Our Mission</h2>
+                <p>At AgriInsight, we believe that every farmer deserves access to advanced technology that can help them protect their crops and improve their yields. Our AI-powered plant disease detection system is designed to be accurate, fast, and easy to use.</p>
+                
+                <div class="mission-features">
+                    <div class="mission-feature">
+                        <i class="fas fa-brain"></i>
+                        <span>Advanced AI Technology</span>
+                    </div>
+                    <div class="mission-feature">
+                        <i class="fas fa-globe"></i>
+                        <span>Global Food Security</span>
+                    </div>
+                    <div class="mission-feature">
+                        <i class="fas fa-users"></i>
+                        <span>Farmer Empowerment</span>
+                    </div>
+                    <div class="mission-feature">
+                        <i class="fas fa-leaf"></i>
+                        <span>Sustainable Agriculture</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mission-image slide-in-right">
+                <img src="{% static 'app/images/logo_uni.png' %}" alt="AgriInsight Mission">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section">
+    <div class="team-container">
+        <h2 class="section-title fade-in">Meet Our Team</h2>
+        <p class="section-subtitle fade-in">Dedicated experts in AI, agriculture, and plant pathology working together to revolutionize crop protection.</p>
+        
+        <div class="team-grid">
+            <div class="team-member scale-in">
+                <div class="team-member-image">
+                    <img src="{% static 'app/images/dr sadia.jpg' %}" alt="Dr. Sadia">
+                </div>
+                <h3 class="team-member-name">Dr. Sadia Ali</h3>
+                <p class="team-member-role">Project Supervisor</p>
+                <p class="team-member-bio">Lead AI Researcher with over 10 years of experience in machine learning and computer vision, particularly in agricultural technology. Dr. Sadia provides expert guidance and oversees the research and technical direction of the project, ensuring scientific integrity and innovation in AI-driven plant health solutions.</p>
+            </div>
+            <div class="team-member scale-in">
+                <div class="team-member-image">
+                    <img src="{% static 'app/images/arbab.jpg' %}" alt="Arbab">
+                </div>
+                <h3 class="team-member-name">Arbab Mehmood</h3>
+                <p class="team-member-role">Website & AI Developer</p>
+                <p class="team-member-bio">Full-stack developer responsible for building and integrating the AI-based disease detection models and leading the development of the web platform, ensuring seamless user interaction and data flow.</p>
+            </div>
+            <div class="team-member scale-in">
+                <div class="team-member-image">
+                    <img src="{% static 'app/images/alisha.jpg' %}" alt="Alisha">
+                </div>
+                <h3 class="team-member-name">Alisha Atta</h3>
+                <p class="team-member-role">Designer & Co-Developer</p>
+                <p class="team-member-bio">Designer and co-developer, responsible for the user interface and experience of the platform, contributing to both front-end development and feature integration to make the system user-friendly and informative.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="values-section">
+    <div class="values-container">
+        <h2 class="section-title fade-in">Our Values</h2>
+        <p class="section-subtitle fade-in">The principles that guide our mission to revolutionize agriculture through technology.</p>
+        
+        <div class="values-grid">
+            <div class="value-card slide-in-left">
+                <div class="value-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3 class="value-title">Innovation</h3>
+                <p class="value-description">We continuously push the boundaries of AI technology to create solutions that make a real difference in agriculture.</p>
+            </div>
+            
+            <div class="value-card slide-in-right">
+                <div class="value-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3 class="value-title">Care</h3>
+                <p class="value-description">We care deeply about farmers' success and the global challenge of food security that affects us all.</p>
+            </div>
+            
+            <div class="value-card slide-in-left">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="value-title">Reliability</h3>
+                <p class="value-description">Our AI models are rigorously tested to ensure accurate and dependable results that farmers can trust.</p>
+            </div>
+            
+            <div class="value-card slide-in-right">
+                <div class="value-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 class="value-title">Partnership</h3>
+                <p class="value-description">We believe in building strong partnerships with farmers, researchers, and agricultural communities worldwide.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in');
+        animatedElements.forEach(el => observer.observe(el));
+    });
+</script>
+{% endblock %}

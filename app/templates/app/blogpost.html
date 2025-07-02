@@ -1,0 +1,489 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Green & White Color Scheme for Plant Disease Detection */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --bright-green: #66BB6A;
+        --pale-green: #A5D6A7;
+        --mint-green: #C8E6C9;
+        --forest-green: #1B5E20;
+        --sage-green: #81C784;
+        --emerald-green: #00C853;
+        --gradient-primary: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        --gradient-secondary: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        --gradient-light: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+        --shadow-soft: 0 10px 30px rgba(46, 125, 50, 0.1);
+        --shadow-strong: 0 20px 40px rgba(46, 125, 50, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .blog-hero {
+        background: var(--gradient-primary);
+        padding: 6rem 0 4rem 0;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .blog-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M25 10 Q35 5 40 15 Q45 25 35 30 Q25 35 20 25 Q15 15 25 10" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .blog-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .blog-hero h1 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .blog-hero p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        line-height: 1.6;
+        font-weight: 300;
+    }
+
+    /* Blog Container */
+    .blog-container {
+        max-width: 1200px;
+        margin: 4rem auto;
+        padding: 0 20px;
+    }
+
+    .blog-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .blog-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+    }
+
+    .blog-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .blog-card {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+        border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    .blog-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-strong);
+        border-color: rgba(76, 175, 80, 0.2);
+    }
+
+    .blog-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .blog-card:hover .blog-image {
+        transform: scale(1.05);
+    }
+
+    .blog-content {
+        padding: 2rem;
+    }
+
+    .blog-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .blog-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .blog-category {
+        background: var(--gradient-light);
+        color: var(--forest-green);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .blog-card-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--forest-green);
+        line-height: 1.3;
+    }
+
+    .blog-excerpt {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .read-more {
+        color: var(--primary-green);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+    }
+
+    .read-more:hover {
+        color: var(--forest-green);
+        transform: translateX(5px);
+    }
+
+    .read-more::after {
+        content: "→";
+        transition: var(--transition);
+    }
+
+    .read-more:hover::after {
+        transform: translateX(3px);
+    }
+
+    /* Featured Blog Post */
+    .featured-post {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-strong);
+        margin-bottom: 3rem;
+        border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    .featured-post:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-strong);
+    }
+
+    .featured-image {
+        width: 100%;
+        max-height: 350px;
+        min-height: 200px;
+        object-fit: contain;
+        display: block;
+        background: #fff;
+        padding: 10px 0;
+    }
+
+    .featured-content {
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .featured-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .featured-excerpt {
+        font-size: 1.1rem;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .featured-meta {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .blog-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .featured-post {
+            grid-template-columns: 1fr;
+        }
+
+        .featured-image {
+            min-height: 200px;
+        }
+
+        .featured-content {
+            padding: 2rem;
+        }
+
+        .featured-title {
+            font-size: 1.5rem;
+        }
+
+        .blog-hero h1 {
+            font-size: 2.5rem;
+        }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .slide-in-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .slide-in-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="blog-hero">
+    <div class="blog-hero-content">
+        <h1 class="fade-in">AgriInsight Blog</h1>
+        <p class="fade-in">Stay updated with the latest insights on plant disease detection, agricultural technology, and farming best practices</p>
+    </div>
+</section>
+
+<!-- Blog Container -->
+<section class="blog-container">
+    <div class="blog-header">
+        <h2 class="blog-title fade-in">Latest Articles</h2>
+        <p class="blog-subtitle fade-in">Discover expert insights, tips, and the latest developments in AI-powered plant disease detection</p>
+    </div>
+
+    <!-- Featured Blog Post -->
+    <article class="featured-post slide-in-left">
+        <img src="{% static 'app/images/Preventive_measures .png' %}" alt="Featured Blog Post" class="featured-image">
+        <div class="featured-content">
+            <div class="featured-meta">
+                <span class="blog-date">
+                    <i class="fas fa-calendar"></i>
+                    December 15, 2024
+                </span>
+                <span class="blog-category">AI Technology</span>
+            </div>
+            <h3 class="featured-title">The Future of AI in Agriculture: Revolutionizing Plant Disease Detection</h3>
+            <p class="featured-excerpt">Discover how artificial intelligence is transforming the way we detect and manage plant diseases, leading to more sustainable and efficient farming practices worldwide.</p>
+            <a href="#" class="read-more">
+                Read Full Article
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </article>
+
+    <!-- Blog Grid -->
+    <div class="blog-grid">
+        <article class="blog-card fade-in">
+            <img src="{% static 'app/images/AI_detecting_tomato.png' %}" alt="AI detecting tomato" class="blog-image">
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span class="blog-date">
+                        <i class="fas fa-calendar"></i>
+                        December 10, 2024
+                    </span>
+                    <span class="blog-category">Disease Detection</span>
+                </div>
+                <h4 class="blog-card-title">Common Tomato Diseases and How AI Helps Detect Them Early</h4>
+                <p class="blog-excerpt">Learn about the most common tomato diseases and how our AI system can identify them before they cause significant damage to your crops.</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </article>
+
+        <article class="blog-card fade-in">
+            <img src="{% static 'app/images/Sustainable_farming.png' %}" alt="Sustainable farming" class="blog-image">
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span class="blog-date">
+                        <i class="fas fa-calendar"></i>
+                        December 8, 2024
+                    </span>
+                    <span class="blog-category">Farming Tips</span>
+                </div>
+                <h4 class="blog-card-title">Sustainable Farming Practices for Better Crop Health</h4>
+                <p class="blog-excerpt">Explore sustainable farming techniques that promote healthy plant growth and reduce the risk of disease outbreaks in your fields.</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </article>
+
+        <article class="blog-card fade-in">
+            <img src="{% static 'app/images/Machine_learning_vs.png' %}" alt="Machine learning vs" class="blog-image">
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span class="blog-date">
+                        <i class="fas fa-calendar"></i>
+                        December 5, 2024
+                    </span>
+                    <span class="blog-category">Technology</span>
+                </div>
+                <h4 class="blog-card-title">Machine Learning vs Traditional Methods: A Comparison</h4>
+                <p class="blog-excerpt">Compare traditional plant disease detection methods with modern machine learning approaches and see how AI is changing the game.</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </article>
+
+        <article class="blog-card fade-in">
+            <img src="{% static 'app/images/Farmers_using_AI_to.png' %}" alt="Farmers using AI" class="blog-image">
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span class="fas fa-calendar"></i>
+                    December 3, 2024
+                    </span>
+                    <span class="blog-category">Case Studies</span>
+                </div>
+                <h4 class="blog-card-title">Success Stories: Farmers Who Transformed Their Yields</h4>
+                <p class="blog-excerpt">Real stories from farmers who have successfully implemented AI-powered disease detection and seen remarkable improvements in their crop yields.</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </article>
+
+        <article class="blog-card fade-in">
+            <img src="{% static 'app/images/Scientific_principle.png' %}" alt="Scientific principle" class="blog-image">
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span class="blog-date">
+                        <i class="fas fa-calendar"></i>
+                        December 1, 2024
+                    </span>
+                    <span class="blog-category">Research</span>
+                </div>
+                <h4 class="blog-card-title">The Science Behind Plant Disease Detection AI</h4>
+                <p class="blog-excerpt">Dive deep into the scientific principles and algorithms that power our plant disease detection system and understand how it works.</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </article>
+
+        <article class="blog-card fade-in">
+            <img src="{% static 'app/images/AI_transforming_agri.png' %}" alt="AI transforming agri" class="blog-image">
+            <div class="blog-content">
+                <div class="blog-meta">
+                    <span class="blog-date">
+                        <i class="fas fa-calendar"></i>
+                        November 28, 2024
+                    </span>
+                    <span class="blog-category">Prevention</span>
+                </div>
+                <h4 class="blog-card-title">Preventive Measures: Stopping Diseases Before They Start</h4>
+                <p class="blog-excerpt">Learn about preventive strategies and early warning systems that can help you protect your crops before diseases take hold.</p>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+        animatedElements.forEach(el => observer.observe(el));
+
+        // Add hover effects for blog cards
+        const blogCards = document.querySelectorAll('.blog-card');
+        blogCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

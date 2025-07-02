@@ -1,0 +1,7 @@
+Django==5.2.3
+tensorflow==2.15.0
+numpy==2.1.3
+Pillow==11.3.0
+pyrebase4==4.8.0
+requests==2.32.4
+h5py==3.14.0

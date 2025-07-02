@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin - All Feedback | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Green & White Color Scheme for Plant Disease Detection */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --bright-green: #66BB6A;
+        --pale-green: #A5D6A7;
+        --mint-green: #C8E6C9;
+        --forest-green: #1B5E20;
+        --sage-green: #81C784;
+        --emerald-green: #00C853;
+        --gradient-primary: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        --gradient-secondary: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        --gradient-light: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+        --shadow-soft: 0 10px 30px rgba(46, 125, 50, 0.1);
+        --shadow-strong: 0 20px 40px rgba(46, 125, 50, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .admin-hero {
+        background: var(--gradient-primary);
+        padding: 6rem 0 4rem 0;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M25 10 Q35 5 40 15 Q45 25 35 30 Q25 35 20 25 Q15 15 25 10" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .admin-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .admin-hero h1 {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .admin-hero p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+
+    /* Main Container */
+    .admin-container {
+        max-width: 1200px;
+        margin: -3rem auto 4rem auto;
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem;
+        box-shadow: var(--shadow-strong);
+        position: relative;
+        z-index: 3;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: var(--gradient-light);
+        border-radius: var(--border-radius);
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        line-height: 1.2;
+        max-width: 100%;
+    }
+
+    .stat-label {
+        color: var(--forest-green);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* Feedback Table */
+    .feedback-table-container {
+        overflow-x: auto;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .feedback-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    .feedback-table th {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .feedback-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--pale-green);
+        vertical-align: top;
+    }
+
+    .feedback-table tr:hover {
+        background: var(--gradient-light);
+    }
+
+    .user-info {
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 0.3rem;
+    }
+
+    .user-email {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: 0.2rem;
+    }
+
+    .star {
+        color: #ffd700;
+        font-size: 1rem;
+    }
+
+    .star.empty {
+        color: #ddd;
+    }
+
+    .category-badge {
+        display: inline-block;
+        background: var(--gradient-secondary);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .feedback-message {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--forest-green);
+    }
+
+    .feedback-message.expanded {
+        white-space: normal;
+        max-width: none;
+    }
+
+    .expand-btn {
+        background: none;
+        border: none;
+        color: var(--primary-green);
+        cursor: pointer;
+        font-size: 0.8rem;
+        text-decoration: underline;
+        margin-top: 0.5rem;
+    }
+
+    .submission-date {
+        font-size: 0.9rem;
+        color: #666;
+        white-space: nowrap;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--forest-green);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--pale-green);
+        margin-bottom: 2rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--forest-green);
+    }
+
+    .empty-state p {
+        color: #666;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .admin-hero {
+            padding: 4rem 0 3rem 0;
+        }
+
+        .admin-container {
+            margin: -2rem 1rem 3rem 1rem;
+            padding: 2rem;
+        }
+
+        .stats-section {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            min-height: 100px;
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+        }
+
+        .feedback-table th,
+        .feedback-table td {
+            padding: 0.8rem 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .feedback-message {
+            max-width: 200px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .admin-hero {
+            padding: 3rem 0 2rem 0;
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="admin-hero">
+    <div class="admin-hero-content">
+        <h1 class="fade-in">Admin Dashboard</h1>
+        <p class="fade-in">Overview of all user feedback and system statistics</p>
+    </div>
+</section>
+
+<!-- Main Container -->
+<section class="admin-container">
+    <!-- Stats Section -->
+    <div class="stats-section fade-in">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_feedback_count }}</div>
+            <div class="stat-label">Total Feedback</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_users }}</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user.name|default:"Admin" }}</div>
+            <div class="stat-label">Current Admin</div>
+        </div>
+    </div>
+
+    <!-- Feedback Table -->
+    {% if all_feedback %}
+        <div class="feedback-table-container fade-in">
+            <table class="feedback-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Category</th>
+                        <th>Message</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in all_feedback %}
+                        <tr>
+                            <td>
+                                <div class="user-info">{{ feedback.user_name }}</div>
+                                <div class="user-email">{{ feedback.user_email }}</div>
+                                <div style="font-size: 0.8rem; color: #999;">UID: {{ feedback.user_uid|slice:":8" }}...</div>
+                            </td>
+                            <td>
+                                <div class="rating-stars">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= feedback.rating %}
+                                            <i class="fas fa-star star"></i>
+                                        {% else %}
+                                            <i class="far fa-star star empty"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div style="font-size: 0.9rem; color: #666;">({{ feedback.rating }}/5)</div>
+                            </td>
+                            <td>
+                                <span class="category-badge">{{ feedback.category }}</span>
+                            </td>
+                            <td>
+                                <div class="feedback-message" id="message-{{ feedback.id }}">
+                                    {{ feedback.message|truncatechars:100 }}
+                                </div>
+                                {% if feedback.message|length > 100 %}
+                                    <button class="expand-btn" onclick="toggleMessage('{{ feedback.id }}')">
+                                        Show More
+                                    </button>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="submission-date">
+                                    {% if feedback.formatted_date != 'Unknown' %}
+                                        {{ feedback.formatted_date }}
+                                    {% else %}
+                                        {{ feedback.submitted_at|date:"M d, Y" }}
+                                    {% endif %}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #999;">
+                                    {% if feedback.formatted_time != 'Unknown' %}
+                                        {{ feedback.formatted_time }}
+                                    {% else %}
+                                        {{ feedback.submitted_at|date:"H:i" }}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state fade-in">
+            <i class="fas fa-comment-slash"></i>
+            <h3>No Feedback Available</h3>
+            <p>No feedback has been submitted yet. Check back later when users start providing feedback.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.fade-in');
+        animatedElements.forEach(el => observer.observe(el));
+    });
+
+    // Toggle message expansion
+    function toggleMessage(feedbackId) {
+        const messageElement = document.getElementById(`message-${feedbackId}`);
+        const button = messageElement.nextElementSibling;
+        
+        if (messageElement.classList.contains('expanded')) {
+            messageElement.classList.remove('expanded');
+            messageElement.textContent = messageElement.textContent.substring(0, 100) + '...';
+            button.textContent = 'Show More';
+        } else {
+            messageElement.classList.add('expanded');
+            // Get the full message from a data attribute or make an AJAX call
+            // For now, we'll just show the truncated version
+            button.textContent = 'Show Less';
+        }
+    }
+</script>
+{% endblock %} 

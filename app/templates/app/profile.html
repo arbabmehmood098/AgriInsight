@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Profile</h2>
+    <div class="card mb-4 p-3">
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+    <h2>About Us</h2>
+    <div class="about-section mt-4">
+        <div class="about-member mb-4">
+            <h3>👩‍🔬 <strong>Dr. Sadia Ali</strong></h3>
+            <p><strong>Project Supervisor</strong><br>
+            Lead AI Researcher with over 10 years of experience in machine learning and computer vision, particularly in agricultural technology. Dr. Sadia provides expert guidance and oversees the research and technical direction of the project, ensuring scientific integrity and innovation in AI-driven plant health solutions.</p>
+        </div>
+        <div class="about-member mb-4">
+            <h3>💻 <strong>Arbab Mehmood</strong></h3>
+            <p><strong>Website & AI Developer</strong><br>
+            A Plant Pathologist with strong expertise in plant diseases and treatment methods, Arbab combines field knowledge with technical skills to develop and integrate AI-based disease detection models. He also leads the development of the web platform, ensuring seamless user interaction and data flow.</p>
+        </div>
+        <div class="about-member mb-4">
+            <h3>🎨 <strong>Alisha Atta</strong></h3>
+            <p><strong>Designer & Co-Developer</strong><br>
+            An Agricultural Expert with a creative edge, Alisha plays a key role in designing the user interface and experience of the platform. She contributes to both front-end development and feature integration, making the system user-friendly and informative for farmers and agricultural professionals.</p>
+        </div>
+        <div class="about-summary mt-5">
+            <h4>🌱 <strong>About Us</strong></h4>
+            <p>We are a multidisciplinary team committed to revolutionizing agriculture through technology. By combining deep domain expertise in plant pathology, agricultural sciences, and artificial intelligence, we aim to create intelligent solutions that empower farmers to detect plant diseases, receive real-time treatment advice, and protect their crops more efficiently. Our mission is to bridge the gap between traditional farming practices and smart agricultural systems.</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Plant Disease Detection | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Green & White Color Scheme for Plant Disease Detection */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --bright-green: #66BB6A;
+        --pale-green: #A5D6A7;
+        --mint-green: #C8E6C9;
+        --forest-green: #1B5E20;
+        --sage-green: #81C784;
+        --emerald-green: #00C853;
+        --gradient-primary: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        --gradient-secondary: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        --gradient-light: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+        --shadow-soft: 0 10px 30px rgba(46, 125, 50, 0.1);
+        --shadow-strong: 0 20px 40px rgba(46, 125, 50, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .model-hero {
+        background: var(--gradient-primary);
+        padding: 4rem 0;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .model-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M25 10 Q35 5 40 15 Q45 25 35 30 Q25 35 20 25 Q15 15 25 10" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .model-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .model-hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .model-hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+
+    .model-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 0.8rem 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .model-hero-badge:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+    }
+
+    /* Upload Section */
+    .upload-section {
+        padding: 4rem 0;
+        background: white;
+    }
+
+    .upload-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .upload-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(76, 175, 80, 0.1);
+        transition: var(--transition);
+    }
+
+    .upload-card:hover {
+        box-shadow: var(--shadow-strong);
+        border-color: rgba(76, 175, 80, 0.2);
+    }
+
+    .upload-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .upload-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+    }
+
+    .upload-subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .upload-area {
+        border: 3px dashed var(--pale-green);
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        background: var(--gradient-light);
+        transition: var(--transition);
+        cursor: pointer;
+        margin-bottom: 2rem;
+    }
+
+    .upload-area:hover {
+        border-color: var(--primary-green);
+        background: rgba(200, 230, 201, 0.3);
+    }
+
+    .upload-area.dragover {
+        border-color: var(--primary-green);
+        background: rgba(76, 175, 80, 0.1);
+        transform: scale(1.02);
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: var(--primary-green);
+        margin-bottom: 1rem;
+    }
+
+    .upload-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-hint {
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .upload-button {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .upload-button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    /* Preview Section */
+    .preview-section {
+        margin-top: 2rem;
+        display: none;
+    }
+
+    .preview-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .image-preview {
+        text-align: center;
+    }
+
+    .preview-image {
+        max-width: 100%;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 1rem;
+    }
+
+    .preview-info {
+        background: var(--gradient-light);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        text-align: left;
+    }
+
+    .preview-info h3 {
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .preview-info p {
+        color: #666;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    /* Results Section */
+    .results-section {
+        margin-top: 2rem;
+        display: none;
+    }
+
+    .results-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        border-left: 4px solid var(--primary-green);
+    }
+
+    .results-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .results-icon {
+        font-size: 2rem;
+        color: var(--primary-green);
+    }
+
+    .results-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--forest-green);
+    }
+
+    .disease-info {
+        background: var(--gradient-light);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .disease-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 0.5rem;
+    }
+
+    .confidence-score {
+        display: inline-block;
+        background: var(--primary-green);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .disease-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .treatment-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(76, 175, 80, 0.2);
+    }
+
+    .treatment-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .treatment-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .treatment-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .treatment-list li:last-child {
+        border-bottom: none;
+    }
+
+    .treatment-list li::before {
+        content: '🌱';
+        font-size: 1rem;
+    }
+
+    /* Loading Animation */
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        display: none;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid var(--pale-green);
+        border-top: 4px solid var(--primary-green);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+        color: var(--forest-green);
+        font-weight: 500;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .preview-container {
+            grid-template-columns: 1fr;
+        }
+
+        .upload-card {
+            padding: 2rem;
+        }
+
+        .upload-area {
+            padding: 2rem 1rem;
+        }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .slide-in-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .slide-in-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scale-in {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.8s ease-out;
+    }
+
+    .scale-in.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="model-hero">
+    <div class="model-hero-content">
+        <div class="model-hero-badge fade-in">
+            <i class="fas fa-brain"></i>
+            <span>AI-Powered Detection</span>
+        </div>
+        <h1 class="model-hero-title fade-in">Plant Disease Detection</h1>
+        <p class="model-hero-subtitle fade-in">Upload a photo of your plant's leaves and get instant AI-powered disease detection with expert treatment recommendations.</p>
+    </div>
+</section>
+
+<!-- Upload Section -->
+<section class="upload-section">
+    <div class="upload-container">
+        <div class="upload-card scale-in">
+            <div class="upload-header">
+                <h2 class="upload-title">Upload Plant Image</h2>
+                <p class="upload-subtitle">Take a clear photo of the affected plant leaves for accurate disease detection</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="uploadForm" action="{% url 'predict_plant_disease' %}">
+                {% csrf_token %}
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Drop your image here or click to browse</div>
+                    <div class="upload-hint">Supports JPG, PNG, JPEG (Max 10MB)</div>
+                    <input type="file" name="image" id="fileInput" class="file-input" accept="image/*" required>
+                    <button type="button" class="upload-button" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-camera"></i>
+                        Choose Image
+                    </button>
+                </div>
+                <button type="submit" class="upload-button" style="margin-top: 1rem;">Predict</button>
+                {% if error_message %}
+                <div class="alert alert-danger" style="margin-top: 1rem;">{{ error_message }}</div>
+                {% endif %}
+
+                {% if prediction_result %}
+                <div class="results-section" id="resultsSection" style="display:block;">
+                    <div class="results-card">
+                        <div class="results-header">
+                            <i class="fas fa-microscope results-icon"></i>
+                            <h3 class="results-title">Detection Results</h3>
+                        </div>
+                        <div class="disease-info">
+                            <div class="disease-name" id="diseaseName">{{ prediction_result.class }}</div>
+                            <div class="confidence-score" id="confidenceScore">{{ prediction_result.confidence }} Confidence</div>
+                            <div class="disease-description" id="diseaseDescription">
+                                {% if prediction_result.class == 'Apple___healthy' or prediction_result.class == 'Blueberry___healthy' or prediction_result.class == 'Cherry_(including_sour)___healthy' or prediction_result.class == 'Corn_(maize)___healthy' or prediction_result.class == 'Grape___healthy' or prediction_result.class == 'Peach___healthy' or prediction_result.class == 'Pepper,_bell___healthy' or prediction_result.class == 'Potato___healthy' or prediction_result.class == 'Raspberry___healthy' or prediction_result.class == 'Soybean___healthy' or prediction_result.class == 'Strawberry___healthy' or prediction_result.class == 'Tomato___healthy' %}
+                                    Your plant appears to be healthy with no signs of disease detected.
+                                {% else %}
+                                    Disease detected: {{ prediction_result.class }}. Please consult an expert for treatment recommendations.
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="treatment-section">
+                            <h4 class="treatment-title">
+                                <i class="fas fa-leaf"></i>
+                                Care Recommendations
+                            </h4>
+                            <ul class="treatment-list" id="treatmentList">
+                                <li>Continue regular watering schedule</li>
+                                <li>Ensure adequate sunlight exposure</li>
+                                <li>Monitor for any changes in appearance</li>
+                                <li>Maintain proper soil nutrition</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in');
+        animatedElements.forEach(el => observer.observe(el));
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const previewImage = document.getElementById('previewImage');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileType = document.getElementById('fileType');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                // Optionally show preview
+            }
+        });
+    });
+</script>
+{% endblock %}

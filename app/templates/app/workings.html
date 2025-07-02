@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}How It Works | AgriInsight{% endblock %}
+
+{% block extra_css %}
+<style>
+    .workings-hero {
+        background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        padding: 4rem 0 2rem 0;
+        text-align: center;
+        color: white;
+    }
+    .workings-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .workings-desc {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+    .workflow-image-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 3rem 0;
+    }
+    .workflow-image-section img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+        background: #fff;
+        padding: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="workings-hero">
+    <div class="container">
+        <h1 class="workings-title">How AgriInsight Works</h1>
+        <p class="workings-desc">See the workflow of our AI-powered plant disease detection system.</p>
+    </div>
+</div>
+<div class="workflow-image-section">
+    <img src="{% static 'app/images/Visual Layout Concep.png' %}" alt="Project Workflow">
+    <p style="margin-top:1rem; color:#555;">Visual representation of the AgriInsight workflow.</p>
+</div>
+{% endblock %} 

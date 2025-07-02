@@ -1,0 +1,784 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AgriInsight | AI-Powered Plant Disease Detection{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Do NOT override body/main padding or navbar styles here! */
+    /* Green & White Color Scheme for Plant Disease Detection */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --bright-green: #66BB6A;
+        --pale-green: #A5D6A7;
+        --mint-green: #C8E6C9;
+        --forest-green: #1B5E20;
+        --sage-green: #81C784;
+        --emerald-green: #00C853;
+        --gradient-primary: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        --gradient-secondary: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        --gradient-light: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+        --shadow-soft: 0 10px 30px rgba(46, 125, 50, 0.1);
+        --shadow-strong: 0 20px 40px rgba(46, 125, 50, 0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .hero {
+        min-height: 100vh;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M25 10 Q35 5 40 15 Q45 25 35 30 Q25 35 20 25 Q15 15 25 10" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(76, 175, 80, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(129, 199, 132, 0.3) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 0.8rem 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .hero-badge:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .hero-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+        margin-bottom: 3rem;
+        opacity: 0.95;
+        line-height: 1.6;
+        font-weight: 300;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .hero-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .hero-feature:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+    }
+
+    .hero-feature i {
+        font-size: 1.2rem;
+        color: var(--mint-green);
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero {
+        padding: 1.2rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: var(--primary-green);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-strong);
+        background: #f8f9fa;
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-3px);
+    }
+
+    /* Floating Icons */
+    .floating-icons {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .floating-icon {
+        position: absolute;
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.1);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-icon:nth-child(1) {
+        top: 15%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .floating-icon:nth-child(2) {
+        top: 25%;
+        right: 15%;
+        animation-delay: 1s;
+    }
+
+    .floating-icon:nth-child(3) {
+        bottom: 30%;
+        left: 15%;
+        animation-delay: 2s;
+    }
+
+    .floating-icon:nth-child(4) {
+        bottom: 20%;
+        right: 10%;
+        animation-delay: 3s;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(10deg);
+        }
+    }
+
+    /* Stats Section */
+    .stats {
+        padding: 5rem 0;
+        background: var(--gradient-light);
+        color: var(--forest-green);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-strong);
+    }
+
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--primary-green);
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--forest-green);
+    }
+
+    /* Features Section */
+    .features {
+        padding: 6rem 0;
+        background: white;
+        position: relative;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 5rem;
+    }
+
+    .section-title {
+        font-size: clamp(2.5rem, 4vw, 3.5rem);
+        font-weight: 700;
+        color: var(--forest-green);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 3rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        transform: scaleX(0);
+        transition: var(--transition);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-strong);
+        border-color: rgba(76, 175, 80, 0.2);
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--gradient-primary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 2rem auto;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--forest-green);
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        color: #666;
+        line-height: 1.7;
+        font-size: 1.05rem;
+    }
+
+    /* CTA Section */
+    .cta {
+        padding: 6rem 0;
+        background: var(--gradient-secondary);
+        text-align: center;
+        color: white;
+    }
+
+    .cta-content {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .cta-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-description {
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+        opacity: 0.95;
+    }
+
+    .btn-cta {
+        background: white;
+        color: var(--primary-green);
+        padding: 1.3rem 3rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.1rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-strong);
+        background: #f8f9fa;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-hero {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+        }
+
+        .hero-features {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-feature {
+            width: 100%;
+            max-width: 280px;
+            justify-content: center;
+        }
+
+        .floating-icons {
+            display: none;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .feature-card {
+            padding: 2rem;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .slide-in-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .slide-in-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s ease-out;
+    }
+
+    .slide-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scale-in {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.8s ease-out;
+    }
+
+    .scale-in.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .bounce-in {
+        opacity: 0;
+        transform: scale(0.3);
+        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .bounce-in.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <!-- Floating Gardening Icons -->
+    <div class="floating-icons">
+        <i class="fas fa-seedling floating-icon"></i>
+        <i class="fas fa-leaf floating-icon"></i>
+        <i class="fas fa-tree floating-icon"></i>
+        <i class="fas fa-spa floating-icon"></i>
+    </div>
+    
+    <div class="hero-content">
+        <div class="hero-badge fade-in">
+            <i class="fas fa-award"></i>
+            <span>Trusted by 1000+ Farmers Worldwide</span>
+        </div>
+        
+        <h1 class="hero-title fade-in" style="color: #fff;">AI-Powered Plant Disease Detection</h1>
+        <p class="hero-subtitle fade-in" style="color: #fff;">Protect your crops with cutting-edge machine learning technology. Detect plant diseases early and get expert treatment recommendations in seconds.</p>
+        
+        <div class="hero-features">
+            <div class="hero-feature fade-in">
+                <i class="fas fa-seedling"></i>
+                <span>Plant Diseases</span>
+            </div>
+            <div class="hero-feature fade-in">
+                <i class="fas fa-bolt"></i>
+                <span>10 Second Analysis</span>
+            </div>
+            <div class="hero-feature fade-in">
+                <i class="fas fa-brain"></i>
+                <span>95% Accuracy</span>
+            </div>
+            <div class="hero-feature fade-in">
+                <i class="fas fa-user-md"></i>
+                <span>Expert Advice</span>
+            </div>
+        </div>
+        
+        <div class="hero-buttons">
+            <a href="{% url 'model' %}" class="btn-hero btn-primary fade-in">
+                <i class="fas fa-camera"></i>
+                Start Detection
+            </a>
+            <a href="{% url 'about' %}" class="btn-hero btn-secondary fade-in">
+                <i class="fas fa-info-circle"></i>
+                Learn More
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="stats-grid">
+        <div class="stat-item bounce-in">
+            <div class="stat-number" data-target="32">0</div>
+            <div class="stat-label">Diseases Detected</div>
+        </div>
+        <div class="stat-item bounce-in">
+            <div class="stat-number" data-target="95">0</div>
+            <div class="stat-label">Accuracy Rate (%)</div>
+        </div>
+        <div class="stat-item bounce-in">
+            <div class="stat-number" data-target="10">0</div>
+            <div class="stat-label">Seconds Analysis</div>
+        </div>
+        <div class="stat-item bounce-in">
+            <div class="stat-number" data-target="1000">0</div>
+            <div class="stat-label">Happy Farmers</div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="section-header">
+        <h2 class="section-title fade-in">Why Choose AgriInsight?</h2>
+        <p class="section-subtitle fade-in">Advanced AI technology designed specifically for modern agriculture and plant health monitoring</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card slide-in-left">
+            <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3 class="feature-title">AI-Powered Detection</h3>
+            <p class="feature-description">Our advanced machine learning models accurately identify over 50 common plant diseases from leaf images with 95% accuracy using deep learning algorithms.</p>
+        </div>
+        
+        <div class="feature-card slide-in-right">
+            <div class="feature-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="feature-title">Instant Results</h3>
+            <p class="feature-description">Get disease detection results within seconds. No waiting, no delays - just quick and accurate analysis for your crops with real-time processing.</p>
+        </div>
+        
+        <div class="feature-card slide-in-left">
+            <div class="feature-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3 class="feature-title">Expert Advice</h3>
+            <p class="feature-description">Receive detailed treatment recommendations and prevention tips from agricultural experts and plant pathologists with proven solutions.</p>
+        </div>
+        
+        <div class="feature-card slide-in-right">
+            <div class="feature-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3 class="feature-title">Mobile Optimized</h3>
+            <p class="feature-description">Use our system on any device - smartphone, tablet, or computer. Perfect for field work and on-the-go analysis with responsive design.</p>
+        </div>
+        
+        <div class="feature-card slide-in-left">
+            <div class="feature-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h3 class="feature-title">Multiple Crops</h3>
+            <p class="feature-description">Detect diseases in various crops including tomatoes, potatoes, corn, wheat, rice, and many more agricultural plants with specialized models.</p>
+        </div>
+        
+        <div class="feature-card slide-in-right">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Detailed Reports</h3>
+            <p class="feature-description">Get comprehensive reports with confidence scores, treatment plans, prevention strategies, and crop health insights for better decision making.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+    <div class="cta-content">
+        <h2 class="cta-title scale-in">Ready to Protect Your Crops?</h2>
+        <p class="cta-description scale-in">Join thousands of farmers who trust AgriInsight for accurate plant disease detection and expert agricultural advice. Start your free detection today!</p>
+        <a href="{% url 'model' %}" class="btn-cta scale-in">
+            <i class="fas fa-play"></i>
+            Start Free Detection
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in, .bounce-in');
+        animatedElements.forEach(el => observer.observe(el));
+
+        // Animate stats numbers with green theme
+        const statsNumbers = document.querySelectorAll('.stat-number');
+        statsNumbers.forEach(stat => {
+            const target = parseInt(stat.getAttribute('data-target'));
+            const duration = 2500; // 2.5 seconds
+            const increment = target / (duration / 16); // 60fps
+            let current = 0;
+
+            const updateNumber = () => {
+                current += increment;
+                if (current < target) {
+                    stat.textContent = Math.floor(current);
+                    requestAnimationFrame(updateNumber);
+                } else {
+                    stat.textContent = target;
+                }
+            };
+
+            // Start animation when stats section is visible
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        updateNumber();
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            });
+
+            statsObserver.observe(stat);
+        });
+
+        // Add hover effects for feature cards
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
